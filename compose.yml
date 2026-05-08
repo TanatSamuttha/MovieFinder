@@ -5,13 +5,6 @@ services:
     volumes:
       - ./services/gateway:/etc/nginx/conf.d
       - ./services/gateway/static:/usr/share/nginx/static
-    command: [nginx-debug, '-g', 'daemon off;']
+    command: ["nginx-debug", "-g", "daemon off;"]
     ports:
       - "80:80"
-
-  auth:
-    build: ./services/auth
-    env_file:
-      - ./services/auth/.env
-    ports:
-      - "3000"

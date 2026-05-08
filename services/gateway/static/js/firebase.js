@@ -8,10 +8,10 @@ import {
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
 const firebaseConfig = {
-  apiKey: process.env.FIREBASE_APIKEY,
-  authDomain: process.env.FIREBASE_AUTHDOMAIN,
-  projectId: process.env.FIREBASE_PROJECTID,
-  appId: process.env.FIREBASE_APPID
+  apiKey: "AIzaSyBJCQQBoZQJ3NckCuH8mvmEZ7KzQse9gLI",
+  authDomain: "movie-finder-42e85.firebaseapp.com",
+  projectId: "movie-finder-42e85",
+  appId: "1:533271386489:web:e36fb2d0f48f64436e77a8"
 };
 
 const app = initializeApp(firebaseConfig);
