@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Finder & Favorites</title>
+    <!-- Google Fonts for the modern look -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>🎬 Movie Finder</h1>
+        
+        <!-- NEW: The AI Search Bar -->
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Ask AI for movie recommendations...">
+            <button id="search-btn">✨</button>
+        </div>
+
+        <div class="controls">
+            <button id="theme-toggle" class="theme-btn">☀️</button>
+            <button id="login-btn">Log In with Google</button>
+            
+            <div id="user-profile" class="hidden">
+                <div class="user-badge">
+                    <span id="user-avatar">👤</span>
+                    <span id="user-info"></span>
+                </div>
+                <button id="logout-btn" class="secondary-btn">Log Out</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="discover-section">
+            <!-- NEW: Added ID so JS can update this text -->
+            <h2 id="section-title">Trending Movies</h2>
+            <div id="movie-grid" class="grid"></div>
+        </section>  
+        
+        <div class="pagination-container" id="pagination-wrapper">
+            <div id="pagination-numbers" class="page-blocks"></div>
+            <div class="goto-container">
+                <span>Go To</span>
+                <input type="number" id="goto-input" min="1" max="500" placeholder="#">
+                <span>Page</span>
+            </div>
+        </div>
+
+        <section id="favorites-section" class="hidden">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-right: 20px;">
+                <h2>❤️ Your Saved Favorites</h2>
+                <button id="clear-fav-btn" class="delete-all-btn">🗑️ Clear All</button>
+            </div>
+            <div id="favorites-grid" class="grid"></div>
+        </section>
+    </main>
+
+    <div id="toast" class="hidden"></div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
