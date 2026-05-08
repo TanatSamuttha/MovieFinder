@@ -8,3 +8,8 @@ services:
     command: ["nginx-debug", "-g", "daemon off;"]
     ports:
       - "80:80"
+
+  server:
+    build: ./services/server
+    env_file:
+      - ./services/server/.env

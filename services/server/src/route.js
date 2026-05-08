@@ -6,7 +6,7 @@ const router = express.Router();
 router.get("/allMovie", async (req, res) => {
     let page;
     try{
-        page = req.body.page;
+        page = req.query.page;
     }
     catch{
         return res.sendStatus(400);

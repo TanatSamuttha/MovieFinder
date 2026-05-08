@@ -1,4 +1,5 @@
 import { authen, logout } from "./js/auth.js";
+import { getAllMovie } from "./js/movie.js";
 
 const themeBtn = document.getElementById('theme-toggle');
 const loginBtn = document.getElementById('login-btn');
@@ -34,3 +35,8 @@ logoutBtn.addEventListener("click", async () => {
     userInfo.textContent = `Hi, ${user.displayName.split(' ')[0]}`;
     favSection.classList.add('hidden');
 })
+
+window.onload = async () => {
+    const data = await getAllMovie(1);
+    console.log(JSON.stringify(data));
+}
