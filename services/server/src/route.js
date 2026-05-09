@@ -1,5 +1,5 @@
 import express from "express";
-import getMovieByPage from "./core/movie.js";
+import { getMovieByPage, getFavorites } from "./core/movie.js";
 import { createUser } from "./controller/userController.js";
 
 const router = express.Router();
@@ -32,6 +32,13 @@ router.post("/auth", async (req, res) => {
         console.log(err);
     }
     return res.sendStatus(200);
+});
+
+router.get("/favorites", async (req, res) => {
+    const uid = req.query.uid;
+    console.log(`query uid -> ${uid}`)
+    const movies = getFavorites(uid);
+    return res.json(movies);
 });
 
 export default router;

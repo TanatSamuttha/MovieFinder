@@ -20,7 +20,7 @@ export async function authen(){
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({uid: uid})
+        body: JSON.stringify({uid})
     });
 
     return {

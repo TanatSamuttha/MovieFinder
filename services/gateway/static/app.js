@@ -1,5 +1,5 @@
 import { authen, logout } from "./js/auth.js";
-import { getAllMovie, getFavorite } from "./js/movie.js";
+import { addFavorite, getAllMovie, getFavorite } from "./js/movie.js";
 
 const themeBtn = document.getElementById('theme-toggle');
 const loginBtn = document.getElementById('login-btn');
@@ -42,6 +42,7 @@ logoutBtn.addEventListener("click", async () => {
     userProfile.classList.add('hidden');
     favSection.classList.add('hidden');
     uid = null;
+    await renderAllMovies(currentPage);
 })
 
 window.onload = async () => {
@@ -50,7 +51,7 @@ window.onload = async () => {
 }
 
 async function renderAllMovies(page = 1) {
-     try {
+    try {
         const data = await getAllMovie(page);
         const movies = data.results;
 
@@ -67,27 +68,46 @@ async function renderAllMovies(page = 1) {
         movies.forEach((movie) => {
             if (!movie.poster_path) return;
 
-            const year = movie.release_date? movie.release_date.substring(0, 4) : "N/A";
+            const year = movie.release_date ? movie.release_date.substring(0, 4) : "N/A";
             const imageUrl = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
 
             const card = document.createElement("div");
             card.className = "movie-card";
+
             card.innerHTML = `
                 <img src="${imageUrl}" alt="${movie.title}">
                 <div class="card-content">
                     <div class="info-container">
-                        <h3 class="movie-title">
-                            ${movie.title}
-                        </h3>
-                        <p class="movie-year">
-                            ${year}
-                        </p>
+                        <h3 class="movie-title">${movie.title}</h3>
+                        <p class="movie-year">${year}</p>
                     </div>
-                    <button class="save-btn">
-                        + Save
-                    </button>
+                    <button class="save-btn">+ Save</button>
                 </div>
             `;
+
+            const saveBtn = card.querySelector(".save-btn");
+
+            saveBtn.addEventListener("click", async () => {
+                if (!uid) {
+                    alert("Please login first");
+                    return;
+                }
+
+                saveBtn.disabled = true;
+                saveBtn.textContent = "Saving...";
+
+                try {
+                    await addFavorite(uid, movie.title);
+
+                    saveBtn.classList.add("saved-state");
+                    saveBtn.textContent = "✅ Saved";
+                } catch (err) {
+                    console.error(err);
+                    saveBtn.textContent = "+ Save";
+                    saveBtn.disabled = false;
+                }
+            });
+
             movieGrid.appendChild(card);
         });
     } catch (err) {
