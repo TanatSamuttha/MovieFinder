@@ -26,7 +26,7 @@ export async function getFavoritesTitle(uid) {
     console.log(`${uid}`)
     if(!uid) return [];
     console.log("get favorite title");
-    const response = await fetch(`/api/favoritestitle?uid=${uid}`, {
+    const response = await fetch(`/api/favorites/title?uid=${uid}`, {
         method: "GET",
         headers: {
             "Accept": "application/json"

@@ -50,7 +50,7 @@ router.post("/favorites", async (req, res) => {
     return res.sendStatus(200);
 })
 
-router.get("/favoritestitle", async (req, res) => {
+router.get("/favorites/title", async (req, res) => {
     const uid = req.query.uid;
     console.log("get favorite title");
     let titles = await getFavoritesTitle(uid);
