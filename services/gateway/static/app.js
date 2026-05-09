@@ -1,5 +1,5 @@
 import { authen, logout } from "./js/auth.js";
-import { getAllMovie } from "./js/movie.js";
+import { getAllMovie, getFavorite } from "./js/movie.js";
 
 const themeBtn = document.getElementById('theme-toggle');
 const loginBtn = document.getElementById('login-btn');
@@ -33,6 +33,7 @@ loginBtn.addEventListener("click", async () => {
     userProfile.classList.remove('hidden');
     userInfo.textContent = `Hi, ${user.displayName.split(' ')[0]}`;
     favSection.classList.remove('hidden');
+    await renderFavorites();
 })
 
 logoutBtn.addEventListener("click", async () => {
@@ -180,5 +181,46 @@ if (gotoInput) {
 
         // เคลียร์ input หลังใช้งาน
         e.target.value = '';
+    });
+}
+
+async function renderFavorites() {
+    if (!uid) return;
+
+    const data = await getFavorite(uid);
+    const movies = data.results;
+    // คาดว่า return เป็น array ของหนัง
+
+    favGrid.innerHTML = "";
+
+    if (!movies || movies.length === 0) {
+        favGrid.innerHTML = `
+            <p style="text-align:center; width:100%;">
+                No favorite movies yet.
+            </p>
+        `;
+        return;
+    }
+
+    movies.forEach(movie => {
+        const card = document.createElement("div");
+        card.className = "movie-card";
+
+        const year = movie.release_date 
+            ? movie.release_date.substring(0, 4) 
+            : "N/A";
+
+        const imageUrl = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
+        card.innerHTML = `
+            <img src="${imageUrl}" alt="${movie.title}">
+            <div class="card-content">
+                <div class="info-container">
+                    <h3 class="movie-title">${movie.title}</h3>
+                    <p class="movie-year">${year}</p>
+                </div>
+            </div>
+        `;
+
+        favGrid.appendChild(card);
     });
 }
