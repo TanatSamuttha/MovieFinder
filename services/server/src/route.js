@@ -1,5 +1,6 @@
 import express from "express";
 import getMovieByPage from "./core/movie.js";
+import { createUser } from "./controller/userController.js";
 
 const router = express.Router();
 
@@ -19,6 +20,18 @@ router.get("/allMovie", async (req, res) => {
     catch{
         return res.sendStatus(500);
     }
+});
+
+router.post("/auth", async (req, res) => {
+    const uid = req.body.uid;
+    console.log(uid);
+    try{
+        await createUser(uid);
+    }
+    catch(err){
+        console.log(err);
+    }
+    return res.sendStatus(200);
 });
 
 export default router;

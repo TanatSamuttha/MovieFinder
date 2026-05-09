@@ -20,10 +20,13 @@ const paginationWrapper = document.getElementById('pagination-wrapper');
 let currentPage = 1;
 const totalPages = 500;
 
+let uid;
+
 loginBtn.addEventListener("click", async () => {
     const data = await authen();
     if(!data) return;
     const user = data.user;
+    uid = data.uid;
     console.log(JSON.stringify(user));
     loginBtn.classList.add('hidden');
     userProfile.classList.remove('hidden');
@@ -35,8 +38,8 @@ logoutBtn.addEventListener("click", async () => {
     await logout();
     loginBtn.classList.remove('hidden');
     userProfile.classList.add('hidden');
-    userInfo.textContent = `Hi, ${user.displayName.split(' ')[0]}`;
     favSection.classList.add('hidden');
+    uid = null;
 })
 
 window.onload = async () => {

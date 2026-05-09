@@ -12,11 +12,20 @@ export async function authen(){
     );
 
     const user = result.user;
-    const idToken = await user.getIdToken();
+    const uid = await user.uid;
+    console.log(uid);
+
+    const response = await fetch(`/api/auth`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({uid: uid})
+    });
 
     return {
         user,
-        idToken
+        uid
     };
 }
 
