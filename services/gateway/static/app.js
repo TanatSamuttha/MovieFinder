@@ -259,7 +259,7 @@ async function renderFavorites() {
                 removeBtn.disabled = true;
                 removeBtn.textContent = "Removing...";
 
-                await removeFavorite(movie.title);
+                await removeFavorite(uid, [movie.title]);
 
                 // ลบออกจาก UI ทันที
                 card.remove();

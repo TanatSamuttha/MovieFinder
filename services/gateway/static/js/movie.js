@@ -52,6 +52,16 @@ export async function addFavorite(uid, title) {
     });
 }
 
-export async function removeFavorite(title) {
-    console.log(title);
+export async function removeFavorite(uid, titles) {
+    if(!uid) return;
+    const response = await fetch(`/api/favorites`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            uid, 
+            titles
+        })
+    });
 }

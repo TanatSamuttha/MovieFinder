@@ -1,7 +1,7 @@
 import express from "express";
 import { getMovieByPage, getFavorites, getFavoritesTitle } from "./core/movie.js";
 import { createUser } from "./controller/userController.js";
-import { insertFavorite } from "./controller/movieController.js";
+import { insertFavorite, removeFavorites } from "./controller/movieController.js";
 
 const router = express.Router();
 
@@ -50,6 +50,13 @@ router.post("/favorites", async (req, res) => {
     await insertFavorite(uid, title);
     return res.sendStatus(200);
 })
+
+router.delete("/favorites", async (req, res) => {
+    const uid = req.body.uid;
+    const titles = req.body.titles;
+    await removeFavorites(uid, titles);
+    return res.sendStatus(200);
+});
 
 router.get("/favorites/title", async (req, res) => {
     const uid = req.query.uid;
