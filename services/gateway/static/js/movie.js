@@ -52,7 +52,7 @@ export async function addFavorite(uid, title) {
     });
 }
 
-export async function removeFavorite(uid, titles) {
+export async function removeFavorites(uid, titles) {
     if(!uid) return;
     const response = await fetch(`/api/favorites`, {
         method: "DELETE",

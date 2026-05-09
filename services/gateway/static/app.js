@@ -1,5 +1,5 @@
 import { authen, logout } from "./js/auth.js";
-import { addFavorite, getAllMovie, getFavorites, getFavoritesTitle, removeFavorite } from "./js/movie.js";
+import { addFavorite, getAllMovie, getFavorites, getFavoritesTitle, removeFavorites } from "./js/movie.js";
 
 const themeBtn = document.getElementById('theme-toggle');
 const loginBtn = document.getElementById('login-btn');
@@ -110,6 +110,7 @@ async function renderAllMovies(page = 1) {
 
                     saveBtn.classList.add("saved-state");
                     saveBtn.textContent = "✅ Saved";
+                    showToast("Saved to Favorites!");
                     await renderFavorites();
                 } catch (err) {
                     console.error(err);
@@ -259,7 +260,7 @@ async function renderFavorites() {
                 removeBtn.disabled = true;
                 removeBtn.textContent = "Removing...";
 
-                await removeFavorite(uid, [movie.title]);
+                await removeFavorites(uid, [movie.title]);
 
                 // ลบออกจาก UI ทันที
                 card.remove();
@@ -273,4 +274,46 @@ async function renderFavorites() {
 
         favGrid.appendChild(card);
     });
+}
+
+clearFavBtn.addEventListener("click", async () => {
+    if (!uid) return;
+
+    const confirmDelete = confirm(
+        "Are you sure you want to remove ALL your saved movies? This cannot be undone."
+    );
+    if (!confirmDelete) return;
+
+    try {
+        clearFavBtn.disabled = true;
+        clearFavBtn.textContent = "Clearing...";
+
+        await removeFavorites(uid, favoritesTitle);
+
+        favGrid.innerHTML = "";
+        favoritesTitle = [];
+
+        await renderAllMovies(currentPage);
+
+        // ✅ success message สีเขียว
+        showToast("All favorites cleared!", "#4caf50");
+
+    } catch (err) {
+        console.error(err);
+        showToast("Failed to clear favorites", "#f44336");
+
+    } finally {
+        clearFavBtn.disabled = false;
+        clearFavBtn.textContent = "🗑️ Clear All";
+    }
+});
+
+function showToast(message, color = "#4caf50") {
+    toast.textContent = message;
+    toast.style.backgroundColor = color;
+    toast.classList.remove("hidden");
+
+    setTimeout(() => {
+        toast.classList.add("hidden");
+    }, 2500);
 }
