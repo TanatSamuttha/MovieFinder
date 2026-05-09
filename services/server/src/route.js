@@ -5,7 +5,7 @@ import { insertFavorite, removeFavorites } from "./controller/movieController.js
 
 const router = express.Router();
 
-router.get("/allMovie", async (req, res) => {
+router.get("/content/allMovie", async (req, res) => {
     let page;
     try{
         page = req.query.page;
@@ -35,7 +35,7 @@ router.post("/auth", async (req, res) => {
     return res.sendStatus(200);
 });
 
-router.get("/favorites", async (req, res) => {
+router.get("/content/favorites", async (req, res) => {
     const uid = req.query.uid;
     console.log(`query uid -> ${uid}`)
     const movies = await getFavorites(uid);
@@ -43,7 +43,7 @@ router.get("/favorites", async (req, res) => {
     return res.json(movies);
 });
 
-router.post("/favorites", async (req, res) => {
+router.post("/content/favorites", async (req, res) => {
     const uid = req.body.uid;
     const title = req.body.title;
     console.log(`post favorite ${uid} ${title}`);
@@ -51,14 +51,14 @@ router.post("/favorites", async (req, res) => {
     return res.sendStatus(200);
 })
 
-router.delete("/favorites", async (req, res) => {
+router.delete("/content/favorites", async (req, res) => {
     const uid = req.body.uid;
     const titles = req.body.titles;
     await removeFavorites(uid, titles);
     return res.sendStatus(200);
 });
 
-router.get("/favorites/title", async (req, res) => {
+router.get("/content/favorites/title", async (req, res) => {
     const uid = req.query.uid;
     console.log("get favorite title");
     let titles = await getFavoritesTitle(uid);
@@ -67,7 +67,7 @@ router.get("/favorites/title", async (req, res) => {
     return res.json(titles);
 });
 
-router.get("/search", async (req, res) => {
+router.get("/content/search", async (req, res) => {
     const query = req.query.query;
     const movies = await getSearch(query);
     console.log(`Search -> ${query}`);

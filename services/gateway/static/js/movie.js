@@ -1,5 +1,5 @@
 export async function getAllMovie(page){
-    const response = await fetch(`/api/allMovie?page=${page}`, {
+    const response = await fetch(`/api/content/allMovie?page=${page}`, {
         method: "GET",
         headers: {
             "Accept": "application/json"
@@ -11,7 +11,7 @@ export async function getAllMovie(page){
 
 export async function getFavorites(uid) {
     if(!uid) return null;
-    const response = await fetch(`/api/favorites?uid=${uid}`, {
+    const response = await fetch(`/api/content/favorites?uid=${uid}`, {
         method: "GET",
         headers: {
             "Accept": "application/json"
@@ -26,7 +26,7 @@ export async function getFavoritesTitle(uid) {
     console.log(`${uid}`)
     if(!uid) return [];
     console.log("get favorite title");
-    const response = await fetch(`/api/favorites/title?uid=${uid}`, {
+    const response = await fetch(`/api/content/favorites/title?uid=${uid}`, {
         method: "GET",
         headers: {
             "Accept": "application/json"
@@ -40,7 +40,7 @@ export async function getFavoritesTitle(uid) {
 export async function addFavorite(uid, title) {
     console.log(`add favorite -> ${uid} ${title}`);
     if(!uid) return;
-    const response = await fetch(`/api/favorites`, {
+    const response = await fetch(`/api/content/favorites`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -54,7 +54,7 @@ export async function addFavorite(uid, title) {
 
 export async function removeFavorites(uid, titles) {
     if(!uid) return;
-    const response = await fetch(`/api/favorites`, {
+    const response = await fetch(`/api/content/favorites`, {
         method: "DELETE",
         headers: {
             "Content-Type": "application/json"
@@ -68,7 +68,7 @@ export async function removeFavorites(uid, titles) {
 
 export async function search(query) {
     console.log(query);
-    const response = await fetch(`/api/search?query=${query}`, {
+    const response = await fetch(`/api/content/search?query=${query}`, {
         method: "GET",
         headers: {
             "Accept": "application/json"

@@ -34,13 +34,11 @@ if (gotoInput) {
 
         if (isNaN(val)) return;
 
-        // clamp ค่าให้อยู่ในช่วง 1 - 500
         if (val < 1) val = 1;
         if (val > totalPages) val = totalPages;
 
         await goToPage(val);
 
-        // เคลียร์ input หลังใช้งาน
         e.target.value = '';
     });
 }
@@ -231,7 +229,6 @@ async function renderFavorites() {
     if (!uid) return;
 
     const movies = await getFavorites(uid);
-    // คาดว่า return เป็น array ของหนัง
 
     favGrid.innerHTML = "";
 
@@ -273,9 +270,9 @@ async function renderFavorites() {
                 removeBtn.textContent = "Removing...";
 
                 await removeFavorites(uid, [movie.title]);
-
-                // ลบออกจาก UI ทันที
                 card.remove();
+
+                await renderAllMovies(currentPage);
 
             } catch (err) {
                 console.error(err);
@@ -307,7 +304,6 @@ clearFavBtn.addEventListener("click", async () => {
 
         await renderAllMovies(currentPage);
 
-        // ✅ success message สีเขียว
         showToast("All favorites cleared!", "#4caf50");
 
     } catch (err) {
@@ -339,7 +335,6 @@ searchInput.addEventListener("keydown", async (e) => {
 async function handleSearch(query) {
     query = query.trim();
 
-    // reset กลับ trending
     if (!query) {
         isSearching = false;
 
@@ -367,7 +362,6 @@ async function handleSearch(query) {
 
         console.log(data);
 
-        // ✅ flatten TMDB responses -> movie array
         const movies = data.flatMap(item => item.results || []);
 
         movieGrid.innerHTML = "";

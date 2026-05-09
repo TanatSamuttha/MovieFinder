@@ -48,7 +48,6 @@ export async function removeFavorites(uid, titles) {
 
     const favorites = data?.favorites || [];
 
-    // ลบทุก title ที่อยู่ใน list
     const updatedFavorites = favorites.filter(
         item => !titles.includes(item)
     );
