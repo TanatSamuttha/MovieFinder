@@ -23,10 +23,7 @@ export async function getFavorites(uid, token) {
 }
 
 export async function getFavoritesTitle(uid, token) {
-    console.log("before getFavoritesTitle");
     if(!uid) return [];
-    console.log("get favorite title");
-    console.log(`${token}`)
     const response = await fetch(`/api/favorites/title?uid=${uid}`, {
         method: "GET",
         headers: {
@@ -35,12 +32,10 @@ export async function getFavoritesTitle(uid, token) {
         }
     });
     const data = await response.json();
-    console.log(data);
     return data;
 }
 
 export async function addFavorite(uid, token, title) {
-    console.log(`add favorite -> ${uid} ${title}`);
     if(!uid) return;
     const response = await fetch(`/api/favorites`, {
         method: "POST",
@@ -71,7 +66,6 @@ export async function removeFavorites(uid, token, titles) {
 }
 
 export async function search(query) {
-    console.log(query);
     const response = await fetch(`/api/search?query=${query}`, {
         method: "GET",
         headers: {
@@ -79,6 +73,5 @@ export async function search(query) {
         }
     });
     const data = response.json();
-    console.log(data);
     return data;
 }

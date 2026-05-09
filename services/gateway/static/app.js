@@ -59,7 +59,6 @@ loginBtn.addEventListener("click", async () => {
     const user = data.user;
     uid = user.uid;
     token = data.token;
-    // console.log(JSON.stringify(user));
     loginBtn.classList.add('hidden');
     userProfile.classList.remove('hidden');
     userInfo.textContent = `Hi, ${user.displayName.split(' ')[0]}`;
@@ -254,7 +253,6 @@ async function renderFavorites() {
 
     movies.forEach(data => {
         const movie = data.results[0];
-        console.log(movie);
         const card = document.createElement("div");
         card.className = "movie-card";
 
@@ -370,8 +368,6 @@ async function handleSearch(query) {
         paginationWrapper.classList.add("hidden");
 
         const data = await search(query);
-
-        console.log(data);
 
         const movies = data.flatMap(item => item.results || []);
 

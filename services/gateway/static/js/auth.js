@@ -14,8 +14,6 @@ export async function authen(){
     const user = result.user;
     const uid = await user.uid;
     const token = await user.getIdToken();
-    console.log(uid);
-    console.log(`Token -> ${token}`);
 
     const response = await fetch(`/api/auth`, {
         method: "POST",

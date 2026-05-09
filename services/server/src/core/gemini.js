@@ -6,7 +6,7 @@ const ai = new GoogleGenAI({
 
 export default async function searchMovieTitles(query) {
     try {
-        const tokenSave = true; //for dev
+        const tokenSave = false; //for dev
         if(tokenSave){
             return [
                 'Star Wars: Episode IV – A New Hope',
