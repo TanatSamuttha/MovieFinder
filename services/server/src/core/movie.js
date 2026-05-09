@@ -25,3 +25,10 @@ export async function getFavorites(uid) {
     console.log("get favorite");
     return movies;
 }
+
+export async function getFavoritesTitle(uid) {
+    const data = await queryFavorite(uid);
+    const favorites = data.favorites;
+    console.log("get favorite title");
+    return favorites;
+}

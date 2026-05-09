@@ -1,5 +1,5 @@
 import { authen, logout } from "./js/auth.js";
-import { addFavorite, getAllMovie, getFavorite } from "./js/movie.js";
+import { addFavorite, getAllMovie, getFavorites, getFavoritesTitle } from "./js/movie.js";
 
 const themeBtn = document.getElementById('theme-toggle');
 const loginBtn = document.getElementById('login-btn');
@@ -20,6 +20,7 @@ const paginationWrapper = document.getElementById('pagination-wrapper');
 
 let currentPage = 1;
 const totalPages = 500;
+let favoritesTitle = [];
 
 let uid;
 
@@ -28,11 +29,12 @@ loginBtn.addEventListener("click", async () => {
     if(!data) return;
     const user = data.user;
     uid = user.uid;
-    console.log(JSON.stringify(user));
+    // console.log(JSON.stringify(user));
     loginBtn.classList.add('hidden');
     userProfile.classList.remove('hidden');
     userInfo.textContent = `Hi, ${user.displayName.split(' ')[0]}`;
     favSection.classList.remove('hidden');
+    await renderAllMovies(currentPage);
     await renderFavorites();
 })
 
@@ -51,6 +53,8 @@ window.onload = async () => {
 }
 
 async function renderAllMovies(page = 1) {
+    favoritesTitle = await getFavoritesTitle(uid);
+    console.log(favoritesTitle);
     try {
         const data = await getAllMovie(page);
         const movies = data.results;
@@ -86,6 +90,11 @@ async function renderAllMovies(page = 1) {
             `;
 
             const saveBtn = card.querySelector(".save-btn");
+
+            if(favoritesTitle.includes(movie.title)){
+                saveBtn.classList.add("saved-state");
+                saveBtn.textContent = "✅ Saved";
+            }
 
             saveBtn.addEventListener("click", async () => {
                 if (!uid) {
@@ -207,7 +216,7 @@ if (gotoInput) {
 async function renderFavorites() {
     if (!uid) return;
 
-    const data = await getFavorite(uid);
+    const data = await getFavorites(uid);
     const movies = data.results;
     // คาดว่า return เป็น array ของหนัง
 

@@ -1,5 +1,5 @@
 import express from "express";
-import { getMovieByPage, getFavorites } from "./core/movie.js";
+import { getMovieByPage, getFavorites, getFavoritesTitle } from "./core/movie.js";
 import { createUser } from "./controller/userController.js";
 import { insertFavorite } from "./controller/movieController.js";
 
@@ -15,7 +15,7 @@ router.get("/allMovie", async (req, res) => {
     }
     try{
         const data = await getMovieByPage(page);
-        console.log(JSON.stringify(data));
+        // console.log(JSON.stringify(data));
         return res.status(200).json(data);
     }
     catch{
@@ -49,5 +49,14 @@ router.post("/favorites", async (req, res) => {
     await insertFavorite(uid, title);
     return res.sendStatus(200);
 })
+
+router.get("/favoritestitle", async (req, res) => {
+    const uid = req.query.uid;
+    console.log("get favorite title");
+    let titles = await getFavoritesTitle(uid);
+    if(!titles) titles = [];
+    console.log(`Will return -> ${JSON.stringify(titles)}`)
+    return res.json(titles);
+});
 
 export default router;

@@ -9,7 +9,7 @@ export async function getAllMovie(page){
     return data;
 }
 
-export async function getFavorite(uid) {
+export async function getFavorites(uid) {
     if(!uid) return null;
     const response = await fetch(`/api/favorites?uid=${uid}`, {
         method: "GET",
@@ -18,6 +18,22 @@ export async function getFavorite(uid) {
         }
     });
     const data = await response.json();
+    return data;
+}
+
+export async function getFavoritesTitle(uid) {
+    console.log("before getFavoritesTitle");
+    console.log(`${uid}`)
+    if(!uid) return [];
+    console.log("get favorite title");
+    const response = await fetch(`/api/favoritestitle?uid=${uid}`, {
+        method: "GET",
+        headers: {
+            "Accept": "application/json"
+        }
+    });
+    const data = await response.json();
+    console.log(data);
     return data;
 }
 
