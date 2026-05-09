@@ -1,5 +1,5 @@
 export async function getAllMovie(page){
-    const response = await fetch(`/api/content/allMovie?page=${page}`, {
+    const response = await fetch(`/api/allMovie?page=${page}`, {
         method: "GET",
         headers: {
             "Accept": "application/json"
@@ -9,11 +9,12 @@ export async function getAllMovie(page){
     return data;
 }
 
-export async function getFavorites(uid) {
+export async function getFavorites(uid, token) {
     if(!uid) return null;
-    const response = await fetch(`/api/content/favorites?uid=${uid}`, {
+    const response = await fetch(`/api/favorites?uid=${uid}`, {
         method: "GET",
         headers: {
+            Authorization: `Bearer ${token}`,
             "Accept": "application/json"
         }
     });
@@ -21,14 +22,15 @@ export async function getFavorites(uid) {
     return data;
 }
 
-export async function getFavoritesTitle(uid) {
+export async function getFavoritesTitle(uid, token) {
     console.log("before getFavoritesTitle");
-    console.log(`${uid}`)
     if(!uid) return [];
     console.log("get favorite title");
-    const response = await fetch(`/api/content/favorites/title?uid=${uid}`, {
+    console.log(`${token}`)
+    const response = await fetch(`/api/favorites/title?uid=${uid}`, {
         method: "GET",
         headers: {
+            Authorization: `Bearer ${token}`,
             "Accept": "application/json"
         }
     });
@@ -37,12 +39,13 @@ export async function getFavoritesTitle(uid) {
     return data;
 }
 
-export async function addFavorite(uid, title) {
+export async function addFavorite(uid, token, title) {
     console.log(`add favorite -> ${uid} ${title}`);
     if(!uid) return;
-    const response = await fetch(`/api/content/favorites`, {
+    const response = await fetch(`/api/favorites`, {
         method: "POST",
         headers: {
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
@@ -52,11 +55,12 @@ export async function addFavorite(uid, title) {
     });
 }
 
-export async function removeFavorites(uid, titles) {
+export async function removeFavorites(uid, token, titles) {
     if(!uid) return;
-    const response = await fetch(`/api/content/favorites`, {
+    const response = await fetch(`/api/favorites`, {
         method: "DELETE",
         headers: {
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
@@ -68,7 +72,7 @@ export async function removeFavorites(uid, titles) {
 
 export async function search(query) {
     console.log(query);
-    const response = await fetch(`/api/content/search?query=${query}`, {
+    const response = await fetch(`/api/search?query=${query}`, {
         method: "GET",
         headers: {
             "Accept": "application/json"

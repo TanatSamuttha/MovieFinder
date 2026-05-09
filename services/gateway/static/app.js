@@ -24,6 +24,7 @@ let favoritesTitle = [];
 let isSearching = false;
 
 let uid;
+let token;
 
 renderPaginationControls();
 await renderAllMovies(1);
@@ -57,6 +58,7 @@ loginBtn.addEventListener("click", async () => {
     if(!data) return;
     const user = data.user;
     uid = user.uid;
+    token = data.token;
     // console.log(JSON.stringify(user));
     loginBtn.classList.add('hidden');
     userProfile.classList.remove('hidden');
@@ -127,7 +129,7 @@ function renderMovieList(movies) {
             saveBtn.textContent = "Saving...";
 
             try {
-                await addFavorite(uid, movie.title);
+                await addFavorite(uid, token, movie.title);
 
                 saveBtn.classList.add("saved-state");
                 saveBtn.textContent = "✅ Saved";
@@ -149,7 +151,7 @@ function renderMovieList(movies) {
 }
 
 async function renderAllMovies(page = 1) {
-    favoritesTitle = await getFavoritesTitle(uid);
+    favoritesTitle = await getFavoritesTitle(uid, token);
 
     try {
         const data = await getAllMovie(page);
@@ -237,7 +239,7 @@ function renderPaginationControls() {
 async function renderFavorites() {
     if (!uid) return;
 
-    const movies = await getFavorites(uid);
+    const movies = await getFavorites(uid, token);
 
     favGrid.innerHTML = "";
 
@@ -278,7 +280,7 @@ async function renderFavorites() {
                 removeBtn.disabled = true;
                 removeBtn.textContent = "Removing...";
 
-                await removeFavorites(uid, [movie.title]);
+                await removeFavorites(uid, token, [movie.title]);
                 card.remove();
 
                 await renderAllMovies(currentPage);
@@ -306,7 +308,7 @@ clearFavBtn.addEventListener("click", async () => {
         clearFavBtn.disabled = true;
         clearFavBtn.textContent = "Clearing...";
 
-        await removeFavorites(uid, favoritesTitle);
+        await removeFavorites(uid, token, favoritesTitle);
 
         favGrid.innerHTML = "";
         favoritesTitle = [];

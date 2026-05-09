@@ -13,11 +13,14 @@ export async function authen(){
 
     const user = result.user;
     const uid = await user.uid;
+    const token = await user.getIdToken();
     console.log(uid);
+    console.log(`Token -> ${token}`);
 
     const response = await fetch(`/api/auth`, {
         method: "POST",
         headers: {
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json"
         },
         body: JSON.stringify({uid})
@@ -25,7 +28,8 @@ export async function authen(){
 
     return {
         user,
-        uid
+        uid,
+        token
     };
 }
 

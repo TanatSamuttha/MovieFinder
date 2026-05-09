@@ -2,10 +2,26 @@ import express from "express";
 import { getMovieByPage, getFavorites, getFavoritesTitle, getSearch } from "./core/movie.js";
 import { createUser } from "./controller/userController.js";
 import { insertFavorite, removeFavorites } from "./controller/movieController.js";
+import authorize from "./core/auth.js";
 
 const router = express.Router();
 
-router.get("/content/allMovie", async (req, res) => {
+router.use("/auth", authorize);
+router.use("/favorites", authorize);
+
+router.post("/auth", async (req, res) => {
+    const uid = req.body.uid;
+    console.log(uid);
+    try{
+        await createUser(uid);
+    }
+    catch(err){
+        console.log(err);
+    }
+    return res.sendStatus(200);
+});
+
+router.get("/allMovie", async (req, res) => {
     let page;
     try{
         page = req.query.page;
@@ -23,19 +39,7 @@ router.get("/content/allMovie", async (req, res) => {
     }
 });
 
-router.post("/auth", async (req, res) => {
-    const uid = req.body.uid;
-    console.log(uid);
-    try{
-        await createUser(uid);
-    }
-    catch(err){
-        console.log(err);
-    }
-    return res.sendStatus(200);
-});
-
-router.get("/content/favorites", async (req, res) => {
+router.get("/favorites", async (req, res) => {
     const uid = req.query.uid;
     console.log(`query uid -> ${uid}`)
     const movies = await getFavorites(uid);
@@ -43,7 +47,7 @@ router.get("/content/favorites", async (req, res) => {
     return res.json(movies);
 });
 
-router.post("/content/favorites", async (req, res) => {
+router.post("/favorites", async (req, res) => {
     const uid = req.body.uid;
     const title = req.body.title;
     console.log(`post favorite ${uid} ${title}`);
@@ -51,14 +55,14 @@ router.post("/content/favorites", async (req, res) => {
     return res.sendStatus(200);
 })
 
-router.delete("/content/favorites", async (req, res) => {
+router.delete("/favorites", async (req, res) => {
     const uid = req.body.uid;
     const titles = req.body.titles;
     await removeFavorites(uid, titles);
     return res.sendStatus(200);
 });
 
-router.get("/content/favorites/title", async (req, res) => {
+router.get("/favorites/title", async (req, res) => {
     const uid = req.query.uid;
     console.log("get favorite title");
     let titles = await getFavoritesTitle(uid);
@@ -67,7 +71,7 @@ router.get("/content/favorites/title", async (req, res) => {
     return res.json(titles);
 });
 
-router.get("/content/search", async (req, res) => {
+router.get("/search", async (req, res) => {
     const query = req.query.query;
     const movies = await getSearch(query);
     console.log(`Search -> ${query}`);
