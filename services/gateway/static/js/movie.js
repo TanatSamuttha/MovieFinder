@@ -1,5 +1,4 @@
 export async function getAllMovie(page){
-    console.log("fetch");
     const response = await fetch(`/api/allMovie?page=${page}`, {
         method: "GET",
         headers: {
