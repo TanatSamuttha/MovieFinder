@@ -13,6 +13,7 @@ const favGrid = document.getElementById('favorites-grid');
 const clearFavBtn = document.getElementById('clear-fav-btn'); 
 
 const searchInput = document.getElementById('search-input');
+const gotoInput = document.getElementById('goto-input');
 const searchBtn = document.getElementById('search-btn');
 const sectionTitle = document.getElementById('section-title');
 const paginationWrapper = document.getElementById('pagination-wrapper');
@@ -26,7 +27,7 @@ loginBtn.addEventListener("click", async () => {
     const data = await authen();
     if(!data) return;
     const user = data.user;
-    uid = data.uid;
+    uid = user.uid;
     console.log(JSON.stringify(user));
     loginBtn.classList.add('hidden');
     userProfile.classList.remove('hidden');
@@ -102,6 +103,7 @@ async function goToPage(page) {
     try {
         currentPage = page;
         renderAllMovies(page)
+        renderPaginationControls();
         window.scrollTo({ top: 0, behavior: "smooth" });
 
     } catch (err) {
@@ -162,4 +164,21 @@ function renderPaginationControls() {
             createBtn('›', currentPage + 1)
         );
     }
+}
+
+if (gotoInput) {
+    gotoInput.addEventListener('change', async (e) => {
+        let val = parseInt(e.target.value);
+
+        if (isNaN(val)) return;
+
+        // clamp ค่าให้อยู่ในช่วง 1 - 500
+        if (val < 1) val = 1;
+        if (val > totalPages) val = totalPages;
+
+        await goToPage(val);
+
+        // เคลียร์ input หลังใช้งาน
+        e.target.value = '';
+    });
 }
