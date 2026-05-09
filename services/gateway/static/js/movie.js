@@ -51,3 +51,7 @@ export async function addFavorite(uid, title) {
         })
     });
 }
+
+export async function removeFavorite(title) {
+    console.log(title);
+}

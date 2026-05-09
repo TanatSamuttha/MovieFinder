@@ -38,7 +38,8 @@ router.post("/auth", async (req, res) => {
 router.get("/favorites", async (req, res) => {
     const uid = req.query.uid;
     console.log(`query uid -> ${uid}`)
-    const movies = getFavorites(uid);
+    const movies = await getFavorites(uid);
+    // console.log(`Return favorite -> ${movies}`);
     return res.json(movies);
 });
 

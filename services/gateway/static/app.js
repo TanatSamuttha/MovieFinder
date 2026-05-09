@@ -1,5 +1,5 @@
 import { authen, logout } from "./js/auth.js";
-import { addFavorite, getAllMovie, getFavorites, getFavoritesTitle } from "./js/movie.js";
+import { addFavorite, getAllMovie, getFavorites, getFavoritesTitle, removeFavorite } from "./js/movie.js";
 
 const themeBtn = document.getElementById('theme-toggle');
 const loginBtn = document.getElementById('login-btn');
@@ -110,6 +110,7 @@ async function renderAllMovies(page = 1) {
 
                     saveBtn.classList.add("saved-state");
                     saveBtn.textContent = "✅ Saved";
+                    await renderFavorites();
                 } catch (err) {
                     console.error(err);
                     saveBtn.textContent = "+ Save";
@@ -216,8 +217,7 @@ if (gotoInput) {
 async function renderFavorites() {
     if (!uid) return;
 
-    const data = await getFavorites(uid);
-    const movies = data.results;
+    const movies = await getFavorites(uid);
     // คาดว่า return เป็น array ของหนัง
 
     favGrid.innerHTML = "";
@@ -231,7 +231,9 @@ async function renderFavorites() {
         return;
     }
 
-    movies.forEach(movie => {
+    movies.forEach(data => {
+        const movie = data.results[0];
+        console.log(movie);
         const card = document.createElement("div");
         card.className = "movie-card";
 
@@ -247,8 +249,27 @@ async function renderFavorites() {
                     <h3 class="movie-title">${movie.title}</h3>
                     <p class="movie-year">${year}</p>
                 </div>
+                <button class="delete-btn">❌ Remove</button>
             </div>
         `;
+        const removeBtn = card.querySelector(".delete-btn");
+
+        removeBtn.addEventListener("click", async () => {
+            try {
+                removeBtn.disabled = true;
+                removeBtn.textContent = "Removing...";
+
+                await removeFavorite(movie.title);
+
+                // ลบออกจาก UI ทันที
+                card.remove();
+
+            } catch (err) {
+                console.error(err);
+                removeBtn.disabled = false;
+                removeBtn.textContent = "❌ Remove";
+            }
+        });
 
         favGrid.appendChild(card);
     });

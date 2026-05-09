@@ -18,11 +18,29 @@ export async function getMovieByPage(page){
     }
 }
 
+export async function getMovieByTitle(title) {
+    const url = `https://api.themoviedb.org/3/search/movie?api_key=${token}&query=${encodeURIComponent(title)}`;
+    try {
+        const response = await fetch(url, {
+            headers: { Authorization: `Bearer ${token}`, accept: 'application/json' }
+        });
+        const data = await response.json();
+        return data;
+    } catch (err) {
+        console.error(err);
+        return null;
+    }
+}
+
 export async function getFavorites(uid) {
     const data = await queryFavorite(uid);
-    const favorites = data.favorites;
-    const movies = [];
-    console.log("get favorite");
+    const favorites = data?.favorites || [];
+
+    const movies = await Promise.all(
+        favorites.map(title => getMovieByTitle(title))
+    );
+
+    // console.log("get favorite ->", movies);
     return movies;
 }
 
