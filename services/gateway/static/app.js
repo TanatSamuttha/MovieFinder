@@ -1,5 +1,5 @@
 import { authen, logout } from "./js/auth.js";
-import { addFavorite, getAllMovie, getFavorites, getFavoritesTitle, removeFavorites } from "./js/movie.js";
+import { addFavorite, getAllMovie, getFavorites, getFavoritesTitle, removeFavorites, search } from "./js/movie.js";
 
 const themeBtn = document.getElementById('theme-toggle');
 const loginBtn = document.getElementById('login-btn');
@@ -21,8 +21,29 @@ const paginationWrapper = document.getElementById('pagination-wrapper');
 let currentPage = 1;
 const totalPages = 500;
 let favoritesTitle = [];
+let isSearching = false;
 
 let uid;
+
+renderPaginationControls();
+await renderAllMovies(1);
+
+if (gotoInput) {
+    gotoInput.addEventListener('change', async (e) => {
+        let val = parseInt(e.target.value);
+
+        if (isNaN(val)) return;
+
+        // clamp ค่าให้อยู่ในช่วง 1 - 500
+        if (val < 1) val = 1;
+        if (val > totalPages) val = totalPages;
+
+        await goToPage(val);
+
+        // เคลียร์ input หลังใช้งาน
+        e.target.value = '';
+    });
+}
 
 loginBtn.addEventListener("click", async () => {
     const data = await authen();
@@ -47,82 +68,90 @@ logoutBtn.addEventListener("click", async () => {
     await renderAllMovies(currentPage);
 })
 
-window.onload = async () => {
-    renderPaginationControls();
-    await renderAllMovies(1);
+function renderMovieList(movies) {
+    movieGrid.innerHTML = "";
+
+    if (!movies || movies.length === 0) {
+        movieGrid.innerHTML = `
+            <p style="text-align:center; width:100%;">
+                No movies found.
+            </p>
+        `;
+        return;
+    }
+
+    movies.forEach((movie) => {
+        if (!movie.poster_path) return;
+
+        const year = movie.release_date
+            ? movie.release_date.substring(0, 4)
+            : "N/A";
+
+        const imageUrl = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
+
+        const card = document.createElement("div");
+        card.className = "movie-card";
+
+        card.innerHTML = `
+            <img src="${imageUrl}" alt="${movie.title}">
+            <div class="card-content">
+                <div class="info-container">
+                    <h3 class="movie-title">${movie.title}</h3>
+                    <p class="movie-year">${year}</p>
+                </div>
+                <button class="save-btn">+ Save</button>
+            </div>
+        `;
+
+        const saveBtn = card.querySelector(".save-btn");
+
+        if (favoritesTitle.includes(movie.title)) {
+            saveBtn.classList.add("saved-state");
+            saveBtn.textContent = "✅ Saved";
+        }
+
+        saveBtn.addEventListener("click", async () => {
+            if (!uid) {
+                alert("Please login first");
+                return;
+            }
+
+            saveBtn.disabled = true;
+            saveBtn.textContent = "Saving...";
+
+            try {
+                await addFavorite(uid, movie.title);
+
+                saveBtn.classList.add("saved-state");
+                saveBtn.textContent = "✅ Saved";
+
+                showToast("Saved to Favorites!");
+
+                await renderFavorites();
+
+            } catch (err) {
+                console.error(err);
+
+                saveBtn.disabled = false;
+                saveBtn.textContent = "+ Save";
+            }
+        });
+
+        movieGrid.appendChild(card);
+    });
 }
 
 async function renderAllMovies(page = 1) {
     favoritesTitle = await getFavoritesTitle(uid);
-    console.log(favoritesTitle);
+
     try {
         const data = await getAllMovie(page);
-        const movies = data.results;
 
-        movieGrid.innerHTML = "";
-        if (!movies || movies.length === 0) {
-            movieGrid.innerHTML = `
-                <p style="text-align:center; width:100%;">
-                    No movies found.
-                </p>
-            `;
-            return;
-        }
+        renderMovieList(data.results);
 
-        movies.forEach((movie) => {
-            if (!movie.poster_path) return;
-
-            const year = movie.release_date ? movie.release_date.substring(0, 4) : "N/A";
-            const imageUrl = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
-
-            const card = document.createElement("div");
-            card.className = "movie-card";
-
-            card.innerHTML = `
-                <img src="${imageUrl}" alt="${movie.title}">
-                <div class="card-content">
-                    <div class="info-container">
-                        <h3 class="movie-title">${movie.title}</h3>
-                        <p class="movie-year">${year}</p>
-                    </div>
-                    <button class="save-btn">+ Save</button>
-                </div>
-            `;
-
-            const saveBtn = card.querySelector(".save-btn");
-
-            if(favoritesTitle.includes(movie.title)){
-                saveBtn.classList.add("saved-state");
-                saveBtn.textContent = "✅ Saved";
-            }
-
-            saveBtn.addEventListener("click", async () => {
-                if (!uid) {
-                    alert("Please login first");
-                    return;
-                }
-
-                saveBtn.disabled = true;
-                saveBtn.textContent = "Saving...";
-
-                try {
-                    await addFavorite(uid, movie.title);
-
-                    saveBtn.classList.add("saved-state");
-                    saveBtn.textContent = "✅ Saved";
-                    showToast("Saved to Favorites!");
-                    await renderFavorites();
-                } catch (err) {
-                    console.error(err);
-                    saveBtn.textContent = "+ Save";
-                    saveBtn.disabled = false;
-                }
-            });
-
-            movieGrid.appendChild(card);
-        });
     } catch (err) {
         console.error("Render Movie Error:", err);
+
         movieGrid.innerHTML = `
             <p style="text-align:center; width:100%; color:red;">
                 Failed to load movies.
@@ -193,26 +222,9 @@ function renderPaginationControls() {
     // NEXT BUTTON
     if (currentPage < totalPages) {
         pagContainer.appendChild(
-            createBtn('›', currentPage + 1)
+            createBtn('»', currentPage + 1)
         );
     }
-}
-
-if (gotoInput) {
-    gotoInput.addEventListener('change', async (e) => {
-        let val = parseInt(e.target.value);
-
-        if (isNaN(val)) return;
-
-        // clamp ค่าให้อยู่ในช่วง 1 - 500
-        if (val < 1) val = 1;
-        if (val > totalPages) val = totalPages;
-
-        await goToPage(val);
-
-        // เคลียร์ input หลังใช้งาน
-        e.target.value = '';
-    });
 }
 
 async function renderFavorites() {
@@ -316,4 +328,84 @@ function showToast(message, color = "#4caf50") {
     setTimeout(() => {
         toast.classList.add("hidden");
     }, 2500);
+}
+
+searchInput.addEventListener("keydown", async (e) => {
+    if(!searchInput.value || searchInput.value === "") return;
+    if (e.key === "Enter") {
+        await handleSearch(searchInput.value);
+    }
+});
+
+// searchInput.addEventListener("input", async () => {
+//     if (searchInput.value.trim() === "") {
+//         paginationWrapper?.classList.remove("hidden");
+//         sectionTitle.textContent = "Trending Movies";
+//         await renderAllMovies(currentPage);
+//     }
+// });
+
+async function handleSearch(query) {
+    query = query.trim();
+
+    // reset กลับ trending
+    if (!query) {
+        isSearching = false;
+
+        sectionTitle.textContent = "Trending Movies";
+        paginationWrapper.classList.remove("hidden");
+
+        await renderAllMovies(currentPage);
+        return;
+    }
+
+    try {
+        isSearching = true;
+
+        sectionTitle.textContent = `✨ Searching for "${query}"...`;
+
+        movieGrid.innerHTML = `
+            <div class="ai-loader">
+                Searching movies...
+            </div>
+        `;
+
+        // ซ่อน pagination ตอน search
+        paginationWrapper.classList.add("hidden");
+
+        // ✅ เรียก search(query)
+        const data = await search(query);
+
+        // รองรับทั้ง return array และ {results}
+        const movies = Array.isArray(data)
+            ? data
+            : data.results || [];
+
+        movieGrid.innerHTML = "";
+
+        if (!movies.length) {
+            movieGrid.innerHTML = `
+                <p style="text-align:center; width:100%;">
+                    No movies found.
+                </p>
+            `;
+            return;
+        }
+
+        sectionTitle.textContent = `✨ Results for "${query}"`;
+
+        // ✅ ใช้ renderer เดิมของคุณ
+        renderMovieList(movies);
+
+    } catch (err) {
+        console.error("Search Error:", err);
+
+        sectionTitle.textContent = "Search Failed";
+
+        movieGrid.innerHTML = `
+            <p style="text-align:center; width:100%; color:red;">
+                Failed to search movies.
+            </p>
+        `;
+    }
 }

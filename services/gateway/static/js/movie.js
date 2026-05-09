@@ -65,3 +65,7 @@ export async function removeFavorites(uid, titles) {
         })
     });
 }
+
+export async function search(query) {
+    console.log(query);
+}
