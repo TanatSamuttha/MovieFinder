@@ -331,19 +331,10 @@ function showToast(message, color = "#4caf50") {
 }
 
 searchInput.addEventListener("keydown", async (e) => {
-    if(!searchInput.value || searchInput.value === "") return;
     if (e.key === "Enter") {
         await handleSearch(searchInput.value);
     }
 });
-
-// searchInput.addEventListener("input", async () => {
-//     if (searchInput.value.trim() === "") {
-//         paginationWrapper?.classList.remove("hidden");
-//         sectionTitle.textContent = "Trending Movies";
-//         await renderAllMovies(currentPage);
-//     }
-// });
 
 async function handleSearch(query) {
     query = query.trim();
@@ -370,16 +361,14 @@ async function handleSearch(query) {
             </div>
         `;
 
-        // ซ่อน pagination ตอน search
         paginationWrapper.classList.add("hidden");
 
-        // ✅ เรียก search(query)
         const data = await search(query);
 
-        // รองรับทั้ง return array และ {results}
-        const movies = Array.isArray(data)
-            ? data
-            : data.results || [];
+        console.log(data);
+
+        // ✅ flatten TMDB responses -> movie array
+        const movies = data.flatMap(item => item.results || []);
 
         movieGrid.innerHTML = "";
 
@@ -394,7 +383,6 @@ async function handleSearch(query) {
 
         sectionTitle.textContent = `✨ Results for "${query}"`;
 
-        // ✅ ใช้ renderer เดิมของคุณ
         renderMovieList(movies);
 
     } catch (err) {

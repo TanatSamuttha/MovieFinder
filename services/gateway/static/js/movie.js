@@ -68,4 +68,13 @@ export async function removeFavorites(uid, titles) {
 
 export async function search(query) {
     console.log(query);
+    const response = await fetch(`/api/search?query=${query}`, {
+        method: "GET",
+        headers: {
+            "Accept": "application/json"
+        }
+    });
+    const data = response.json();
+    console.log(data);
+    return data;
 }

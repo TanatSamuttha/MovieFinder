@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 import { queryFavorite } from "../controller/movieController.js";
+import searchMovieTitles from "./gemini.js";
 
 const result = dotenv.config({path: ".env"});
 const token = process.env.TMDB_TOKEN;
@@ -49,4 +50,13 @@ export async function getFavoritesTitle(uid) {
     const favorites = data.favorites;
     console.log("get favorite title");
     return favorites;
+}
+
+export async function getSearch(query) {
+    const data = await searchMovieTitles(query);
+    const movies = await Promise.all(
+        data.map(title => getMovieByTitle(title))
+    );
+    // console.log(movies);
+    return movies
 }

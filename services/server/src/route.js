@@ -1,5 +1,5 @@
 import express from "express";
-import { getMovieByPage, getFavorites, getFavoritesTitle } from "./core/movie.js";
+import { getMovieByPage, getFavorites, getFavoritesTitle, getSearch } from "./core/movie.js";
 import { createUser } from "./controller/userController.js";
 import { insertFavorite, removeFavorites } from "./controller/movieController.js";
 
@@ -65,6 +65,13 @@ router.get("/favorites/title", async (req, res) => {
     if(!titles) titles = [];
     console.log(`Will return -> ${JSON.stringify(titles)}`)
     return res.json(titles);
+});
+
+router.get("/search", async (req, res) => {
+    const query = req.query.query;
+    const movies = await getSearch(query);
+    console.log(`Search -> ${query}`);
+    return res.json(movies);
 });
 
 export default router;
