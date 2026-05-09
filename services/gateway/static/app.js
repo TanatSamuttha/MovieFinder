@@ -28,6 +28,15 @@ let uid;
 renderPaginationControls();
 await renderAllMovies(1);
 
+const savedTheme =
+    localStorage.getItem("theme") ||
+    (window.matchMedia("(prefers-color-scheme: light)").matches
+        ? "light"
+        : "dark");
+
+applyTheme(savedTheme);
+themeBtn.addEventListener("click", toggleTheme);
+
 if (gotoInput) {
     gotoInput.addEventListener('change', async (e) => {
         let val = parseInt(e.target.value);
@@ -390,4 +399,24 @@ async function handleSearch(query) {
             </p>
         `;
     }
+}
+
+function applyTheme(theme) {
+    const isLight = theme === "light";
+
+    document.body.classList.toggle("light-mode", isLight);
+
+    // behavior เหมือนโค้ดเดิม 100%
+    themeBtn.textContent = isLight ? "🌙" : "☀️";
+}
+
+function toggleTheme() {
+    const isLight =
+        document.body.classList.contains("light-mode");
+
+    const newTheme = isLight ? "dark" : "light";
+
+    applyTheme(newTheme);
+
+    localStorage.setItem("theme", newTheme);
 }
