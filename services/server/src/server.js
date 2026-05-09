@@ -9,5 +9,5 @@ app.use("/api", router);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-    console.log(`Listen: http://localhost:${port}`);
+    console.log(`Listen: http://0.0.0.0:${port}`);
 });
