@@ -1,6 +1,7 @@
 import express from "express";
 import { getMovieByPage, getFavorites } from "./core/movie.js";
 import { createUser } from "./controller/userController.js";
+import { insertFavorite } from "./controller/movieController.js";
 
 const router = express.Router();
 
@@ -40,5 +41,13 @@ router.get("/favorites", async (req, res) => {
     const movies = getFavorites(uid);
     return res.json(movies);
 });
+
+router.post("/favorites", async (req, res) => {
+    const uid = req.body.uid;
+    const title = req.body.title;
+    console.log(`post favorite ${uid} ${title}`);
+    await insertFavorite(uid, title);
+    return res.sendStatus(200);
+})
 
 export default router;
