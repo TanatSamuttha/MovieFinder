@@ -1,11 +1,7 @@
 services:
 
-  web:
-    image: nginx:1.29.8
-    volumes:
-      - ./services/gateway:/etc/nginx/conf.d
-      - ./services/gateway/static:/usr/share/nginx/static
-    command: ["nginx-debug", "-g", "daemon off;"]
+  gateway:
+    build: ./services/gateway
     ports:
       - "80:80"
 
