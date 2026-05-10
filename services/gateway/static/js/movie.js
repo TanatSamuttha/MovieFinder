@@ -9,9 +9,9 @@ export async function getAllMovie(page){
     return data;
 }
 
-export async function getFavorites(uid, token) {
-    if(!uid) return null;
-    const response = await fetch(`/api/favorites?uid=${uid}`, {
+export async function getFavorites(token) {
+    if(!token) return null;
+    const response = await fetch(`/api/favorites`, {
         method: "GET",
         headers: {
             Authorization: `Bearer ${token}`,
@@ -22,9 +22,9 @@ export async function getFavorites(uid, token) {
     return data;
 }
 
-export async function getFavoritesTitle(uid, token) {
-    if(!uid) return [];
-    const response = await fetch(`/api/favorites/title?uid=${uid}`, {
+export async function getFavoritesTitle(token) {
+    if(!token) return [];
+    const response = await fetch(`/api/favorites/title`, {
         method: "GET",
         headers: {
             Authorization: `Bearer ${token}`,
@@ -35,8 +35,8 @@ export async function getFavoritesTitle(uid, token) {
     return data;
 }
 
-export async function addFavorite(uid, token, title) {
-    if(!uid) return;
+export async function addFavorite(token, title) {
+    if(!token) return;
     const response = await fetch(`/api/favorites`, {
         method: "POST",
         headers: {
@@ -44,14 +44,13 @@ export async function addFavorite(uid, token, title) {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            uid, 
             title
         })
     });
 }
 
-export async function removeFavorites(uid, token, titles) {
-    if(!uid) return;
+export async function removeFavorites(token, titles) {
+    if(!token) return;
     const response = await fetch(`/api/favorites`, {
         method: "DELETE",
         headers: {
@@ -59,7 +58,6 @@ export async function removeFavorites(uid, token, titles) {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            uid, 
             titles
         })
     });
