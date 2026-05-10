@@ -10,7 +10,7 @@ router.use("/auth", authorize);
 router.use("/favorites", authorize);
 
 router.post("/auth", async (req, res) => {
-    const uid = req.body.uid;
+    const uid = req.user.uid;
     console.log(uid);
     try{
         await createUser(uid);
@@ -40,7 +40,7 @@ router.get("/allMovie", async (req, res) => {
 });
 
 router.get("/favorites", async (req, res) => {
-    const uid = req.query.uid;
+    const uid = req.user.uid;
     console.log(`query uid -> ${uid}`)
     const movies = await getFavorites(uid);
     // console.log(`Return favorite -> ${movies}`);
@@ -48,7 +48,7 @@ router.get("/favorites", async (req, res) => {
 });
 
 router.post("/favorites", async (req, res) => {
-    const uid = req.body.uid;
+    const uid = req.user.uid;
     const title = req.body.title;
     console.log(`post favorite ${uid} ${title}`);
     await insertFavorite(uid, title);
@@ -56,14 +56,14 @@ router.post("/favorites", async (req, res) => {
 })
 
 router.delete("/favorites", async (req, res) => {
-    const uid = req.body.uid;
+    const uid = req.user.uid;
     const titles = req.body.titles;
     await removeFavorites(uid, titles);
     return res.sendStatus(200);
 });
 
 router.get("/favorites/title", async (req, res) => {
-    const uid = req.query.uid;
+    const uid = req.user.uid;
     console.log("get favorite title");
     let titles = await getFavoritesTitle(uid);
     if(!titles) titles = [];
